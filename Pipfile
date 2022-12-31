@@ -5,6 +5,7 @@ name = "pypi"
 
 [packages]
 manim = "*"
+networkx = "*"
 
 [dev-packages]
 black = "*"
