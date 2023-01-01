@@ -68,7 +68,8 @@ class Main(Scene):
         2. What do you infer then? Bounds (lower/upper)
     5. Further concepts:
         1. Independence / Conditional independence
-        2. Learning SPNs
+        2. SPN have to satisfy certain properties to represent probabilities
+        3. Imprecise probabilities search space
     """
 
     def fade_in_out(self, mobject, delay=1, **kwargs):
@@ -80,12 +81,15 @@ class Main(Scene):
     def construct(self):
         """Call sub-sequences."""
         self.title()
-        # self.next_section()
-        # self.dices()
-        # self.next_section()
-        # self.sum_product_networks()
+        self.next_section()
+        self.dices()
+        self.next_section()
+        self.sum_product_networks()
         self.next_section()
         self.uncertainty()
+        self.next_section()
+        self.further()
+        self.wait(2)
 
     def title(self):
         """Title sequence."""
@@ -124,7 +128,7 @@ class Main(Scene):
         probabilities = VGroup(*[MathTex(r"\frac16") for _ in range(6)])
         blue_die_faces = get_die_faces()
         probabilities_table = self.get_probabilities_table(r"\frac{1}{6}")
-        t2 = Tex(r"$F$ is the value obtained by rolling a 6-sided fair die")
+        t2 = Tex(r"$D$ is the value obtained by rolling a 6-sided fair die")
 
         # Adding probabilities
         t3a = VGroup(
@@ -543,7 +547,7 @@ class Main(Scene):
 
         t6d.next_to(t6c, DOWN)
         self.play(FadeIn(t6d))
-        self.wait(1)
+        self.wait(3)
         self.play(FadeOut(t6a, t6b, t6c, t6d))
 
     def sum_product_networks(self):
@@ -634,7 +638,7 @@ class Main(Scene):
                 dot_color=BLUE_B,
             ),
             MathTex(r")"),
-            MathTex(r"\times 1", color=BLUE_B),
+            MathTex(r"\times 1", color=RED_B),
             MathTex(r"+", color=BLUE_B),  # 8
             MathTex(r"\mathbb{P}(D_1="),
             *get_die_faces(
@@ -644,7 +648,7 @@ class Main(Scene):
                 dot_color=BLUE_B,
             ),
             MathTex(r")"),
-            MathTex(r"\times 0", color=BLUE_B),
+            MathTex(r"\times 0", color=RED_B),
         )
         sum_product_6_6 = VGroup(
             MathTex(r"\mathbb{P}("),
@@ -676,7 +680,7 @@ class Main(Scene):
         t3a = MarkupText(
             f"In contrary to the full table, the "
             f"<span fgcolor='{BLUE_B}'>sum</span>-<span fgcolor='{RED_B}'>product</span> "
-            f"network requires fewer computations",
+            f"network (SPN) requires fewer computations",
             font_size=DEFAULT_FONT_SIZE * 0.5,
         )
         t3b = MarkupText(
@@ -689,13 +693,13 @@ class Main(Scene):
         t1.to_edge(UP)
         t1.arrange(DOWN)
         self.play(FadeIn(t1a))
-        self.wait(1)
+        self.wait(2)
         self.play(FadeIn(t1b))
-        self.wait(1)
+        self.wait(2)
         self.play(FadeIn(t1c))
-        self.wait(1)
+        self.wait(2)
         self.play(FadeOut(t1))
-        self.wait(1)
+        self.wait(2)
 
         # Sum-product
         t2a.to_edge(UP)
@@ -708,24 +712,26 @@ class Main(Scene):
         self.wait(1)
 
         self.play(FadeIn(t2a))
-        self.play(FadeIn(sum_product_24[0:4]))
         self.play(
+            FadeIn(sum_product_24[0:4]),
             graph.vertices[r"a_2"].animate.set_color(BLUE_B),
         )
         self.wait(1)
 
-        self.play(FadeIn(sum_product_24[4:8]))
         self.play(
+            FadeIn(sum_product_24[4:8]),
             graph.edges[(r"+'", r"a_2")].animate.set_color(BLUE_B),
         )
         self.wait(1)
 
-        self.play(FadeIn(sum_product_24[8]))
-        self.play(graph.vertices[r"+'"].animate.set_color(BLUE_B))
+        self.play(
+            graph.vertices[r"+'"].animate.set_color(BLUE_B),
+            FadeIn(sum_product_24[8]),
+        )
         self.wait(1)
 
-        self.play(FadeIn(sum_product_24[9:]))
         self.play(
+            FadeIn(sum_product_24[9:]),
             graph.vertices[r"a_4"].animate.set_color(GREY),
             graph.edges[(r"+'", r"a_4")].animate.set_color(GREY),
         )
@@ -743,8 +749,8 @@ class Main(Scene):
         self.wait(1)
 
         self.play(FadeIn(t2b))
-        self.play(FadeIn(sum_product_6_6[0:6]))
         self.play(
+            FadeIn(sum_product_6_6[0:6]),
             graph.vertices[r"a_6"].animate.set_color(BLUE_B),
             graph.vertices[r"b_6"].animate.set_color(BLUE_B),
         )
@@ -775,8 +781,9 @@ class Main(Scene):
         t3b.next_to(t3a, DOWN)
         self.play(FadeIn(t3a))
         self.wait(1)
-        self.play(FadeIn(t3b))
-        self.wait(4)
+        self.play(ReplacementTransform(t3a, t3b))
+        self.wait(3)
+        self.play(FadeOut(t3a), FadeOut(t3b))
 
     def uncertainty(self):
         """
@@ -793,7 +800,7 @@ class Main(Scene):
         t1a = MarkupText(
             f"Probabilities are "
             f"<span fgcolor='{BLUE_B}'>subjective</span> "
-            f" and often "
+            f"and often "
             f"<span fgcolor='{BLUE_B}'>unknown</span> ",
             font_size=DEFAULT_FONT_SIZE * 0.5,
         )
@@ -801,16 +808,245 @@ class Main(Scene):
             f"What if they were also " f"<span fgcolor='{BLUE_B}'>uncertain</span> ?",
             font_size=DEFAULT_FONT_SIZE * 0.5,
         )
+        t1c = MarkupText(
+            f"If the die's fairness is "
+            f"<span fgcolor='{BLUE_B}'>uncertain</span>"
+            f", then computed probabilities are often wrong",
+            font_size=DEFAULT_FONT_SIZE * 0.5,
+        )
+        t1d = MarkupText(
+            f"We say that the SPN is not " f"<span fgcolor='{BLUE_B}'>robust</span>",
+            font_size=DEFAULT_FONT_SIZE * 0.5,
+        )
+        t1 = VGroup(t1a, t1b, t1c, t1d)
 
         t2a = MarkupText(
-            f"Let us consider a die, but its fairness is"
+            f"Let us consider a die, but its fairness is "
             f"<span fgcolor='{BLUE_B}'>uncertain</span>",
             font_size=DEFAULT_FONT_SIZE * 0.5,
         )
-        probabilities = VGroup(*[MathTex(r"p_" + str(i)) for i in range(6)])
-        probabilities_table = self.get_probabilities_table(probabilities)
+        t2b = MarkupText(
+            f"The probabilities are <span fgcolor='{RED_B}'>imprecise</span>"
+            f", meaning that instead "
+            f"of <span fgcolor='{BLUE_B}'>real-valued</span> probabilities, ",
+            font_size=DEFAULT_FONT_SIZE * 0.5,
+        )
+        t2c = MarkupText(
+            f"we have <span fgcolor='{RED_B}'>value sets</span> probabilities",
+            font_size=DEFAULT_FONT_SIZE * 0.5,
+        )
+        t2 = VGroup(t2a, t2b, t2c)
+        real_probabilities = VGroup(
+            *[MathTex(r"p_" + str(i), color=BLUE_B) for i in range(6)]
+        )
+        _real_probabilities = MathTex(
+            r"p_1 &=1/6\\"
+            r"p_2 &=1/6\\"
+            r"p_3 &=1/6\\"
+            r"p_4 &=1/6\\"
+            r"p_5 &=1/6\\"
+            r"p_6 &=1/6\\",
+            font_size=DEFAULT_FONT_SIZE * 0.7,
+        )
+        set_probabilities = VGroup(
+            *[MathTex(r"p_" + str(i), color=RED_B) for i in range(6)]
+        )
+        _set_probabilities = MathTex(
+            r"&L_1 \leq p_1 \leq U_1\\",
+            r"&L_2 \leq p_2 \leq U_2\\",
+            r"&L_3 \leq p_3 \leq U_3\\",
+            r"&L_4 \leq p_4 \leq U_4\\",
+            r"&L_5 \leq p_5 \leq U_5\\",
+            r"&L_6 \leq p_6 \leq U_6\\",
+            font_size=DEFAULT_FONT_SIZE * 0.7,
+        )
+        real_prob_table = self.get_probabilities_table(real_probabilities)
+        set_prob_table = self.get_probabilities_table(
+            set_probabilities, dot_color=RED_B
+        )
+
+        t3a = MarkupText(
+            f"What robustness you gain from using <span fgcolor='{RED_B}'>imprecise</span>, "
+            f"you lose in computational complexity",
+            font_size=DEFAULT_FONT_SIZE * 0.5,
+        )
+        t3b = MarkupText(
+            "This is a " f"<span fgcolor='{BLUE_B}'>trade-off</span>",
+            font_size=DEFAULT_FONT_SIZE * 0.5,
+        )
+        t3c = MarkupText(
+            f"Instead, we are more interested in finding the "
+            f"<span fgcolor='{BLUE_B}'>minimum</span>",
+            font_size=DEFAULT_FONT_SIZE * 0.5,
+        )
+        t3d = MarkupText(
+            f" and "
+            f"<span fgcolor='{BLUE_B}'>maximum</span> "
+            f"values for a given probability",
+            font_size=DEFAULT_FONT_SIZE * 0.5,
+        )
+        t3 = VGroup(t3a, t3b, t3c, t3d)
+        real_prob_1 = VGroup(
+            MathTex(r"\mathbb{P}(D="),
+            *get_die_faces([1], side_length=0.5, dot_radius=0.04),
+            MathTex(r")"),
+            MathTex(r"="),
+            MathTex(r"p_1"),
+        )
+        min_prob_1 = VGroup(
+            MathTex(r"\min"),
+            MathTex(r"\mathbb{P}(D="),
+            *get_die_faces([1], side_length=0.5, dot_radius=0.04),
+            MathTex(r")"),
+            MathTex(r"="),
+            MathTex(r"?"),
+        )
+        max_prob_1 = VGroup(
+            MathTex(r"\max"),
+            MathTex(r"\mathbb{P}(D="),
+            *get_die_faces([1], side_length=0.5, dot_radius=0.04),
+            MathTex(r")"),
+            MathTex(r"="),
+            MathTex(r"?"),
+        )
 
         ## --- Animation ---- ##
+        t1.arrange(DOWN)
+        t1.to_edge(UP)
+        for t in t1:
+            self.play(FadeIn(t))
+            self.wait(1)
+        self.wait(2)
+
+        t2.arrange(DOWN)
+        t2.to_edge(UP)
+        for table in (real_prob_table, set_prob_table):
+            table.scale(scale_factor=0.75)
+            table.next_to(t2, DOWN).shift(LEFT * 2)
+        for prob in (_real_probabilities, _set_probabilities):
+            prob.next_to(real_prob_table, RIGHT).shift(RIGHT * 2)
+        self.play(ReplacementTransform(t1, t2a))
+        self.wait(1)
+        self.play(FadeIn(t2b))
+        self.wait(1)
+        self.play(FadeIn(real_prob_table, _real_probabilities))
+        self.wait(2)
+        self.play(
+            FadeIn(t2c),
+            ReplacementTransform(real_prob_table, set_prob_table),
+            ReplacementTransform(_real_probabilities, _set_probabilities),
+        )
+        self.wait(3)
+        self.play(FadeOut(set_prob_table, _set_probabilities))
+
+        t3.arrange(DOWN)
+        t3.to_edge(UP)
+        for prob in (real_prob_1, min_prob_1, max_prob_1):
+            prob.arrange()
+        real_prob_1.next_to(t3, DOWN * 2).shift(LEFT * 3)
+        min_prob_1.move_to(real_prob_1)
+        max_prob_1.next_to(real_prob_1, RIGHT).shift(RIGHT)
+        self.play(ReplacementTransform(t2, t3a))
+        self.wait(2)
+        self.play(FadeIn(real_prob_1))
+        self.wait(1)
+        self.play(FadeIn(t3b))
+        self.wait(1)
+        self.play(FadeIn(t3c))
+        self.wait(0.5)
+        self.play(
+            ReplacementTransform(real_prob_1, min_prob_1),
+        )
+        self.wait(1)
+        self.play(
+            FadeIn(t3d),
+            FadeIn(max_prob_1),
+        )
+        self.wait(1)
+        self.play(
+            FadeOut(t3),
+            FadeOut(min_prob_1),
+            FadeOut(max_prob_1),
+        )
+
+    def further(self):
+        """
+        5. Further concepts:
+            1. Independence / Conditional independence
+            2. SPN have to satisfy certain properties to represent probabilities
+            3. Imprecise probabilities search space
+            4. Learning SPNs
+        """
+        t1a = Paragraph(
+            f"Over the course of this video, we have skipped essential concepts\n"
+            f"for the sake of clarity.",
+            font_size=DEFAULT_FONT_SIZE * 0.5,
+            alignment="center",
+        )
+        t1b = MarkupText(
+            f"For example, how do you represent "
+            f"<span fgcolor='{BLUE_B}'>non-independence</span> "
+            f"in SPNs?",
+            font_size=DEFAULT_FONT_SIZE * 0.5,
+        )
+        t1c = MarkupText(
+            f"What would the graphs look like?",
+            font_size=DEFAULT_FONT_SIZE * 0.5,
+        )
+        t1 = VGroup(t1a, t1b, t1c)
+
+        t2a = MarkupText(
+            f"SPNs have to satisfy a number of "
+            f"<span fgcolor='{BLUE_B}'>properties</span>",
+            font_size=DEFAULT_FONT_SIZE * 0.5,
+        )
+        t2b = MarkupText(
+            f"in order to accurately represent probability distributions",
+            font_size=DEFAULT_FONT_SIZE * 0.5,
+        )
+        t2c = MarkupText(
+            f"What would they be?",
+            font_size=DEFAULT_FONT_SIZE * 0.5,
+        )
+        t2 = VGroup(t2a, t2b, t2c)
+
+        t3a = MarkupText(
+            f"In addition, using "
+            f"<span fgcolor='{RED_B}'>imprecise</span> "
+            f"probabilities",
+            font_size=DEFAULT_FONT_SIZE * 0.5,
+        )
+        t3b = MarkupText(
+            f"How would you find the extrema of probabilities?",
+            font_size=DEFAULT_FONT_SIZE * 0.5,
+        )
+        t3 = VGroup(t3a, t3b)
+
+        ## --- Animation ---- ##
+        t1.arrange(DOWN)
+        t1.to_edge(UP)
+        for t in t1:
+            self.play(FadeIn(t))
+            self.wait(1)
+        self.wait(2)
+
+        t2.arrange(DOWN)
+        t2.to_edge(UP)
+        self.play(ReplacementTransform(t1, t2[0]))
+        self.wait(1)
+        for t in t2[1:]:
+            self.play(FadeIn(t))
+            self.wait(1)
+        self.wait(2)
+
+        t3.arrange(DOWN)
+        t3.to_edge(UP)
+        self.play(ReplacementTransform(t2, t3[0]))
+        self.wait(1)
+        for t in t3[1:]:
+            self.play(FadeIn(t))
+            self.wait(1)
+        self.wait(3)
 
     def get_probabilities_table(
         self,
@@ -855,7 +1091,7 @@ class Main(Scene):
             else:
                 values = [[df, p] for df, p in zip(die_faces, probabilities)]
             if labels:
-                values = [[MathTex("f"), MathTex(r"\mathbb{P}(D=d)")]] + values
+                values = [[MathTex("d"), MathTex(r"\mathbb{P}(D=d)")]] + values
         else:
             if flip:
                 values = [
@@ -868,7 +1104,7 @@ class Main(Scene):
                     [p.copy() for p in probabilities],
                 ]
             if labels:
-                values[0] = [MathTex("f")] + values[0]
+                values[0] = [MathTex("d")] + values[0]
                 values[1] = [MathTex(r"\mathbb{P}(D=d)")] + values[1]
         probabilities_table = MobjectTable(
             values,

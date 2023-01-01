@@ -45,3 +45,7 @@ understand their links. 
 > Each group must take a different paper. The rule is first come, first served 
 (each time a group chooses a paper and tells us so, this paper is no longer 
 available).
+
+## Licence
+
+- Music: https://www.bensound.com/royalty-free-music/track/relaxing
