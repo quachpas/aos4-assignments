@@ -585,29 +585,7 @@ class Main(Scene):
             ),
         )
         t1 = VGroup(t1a, t1b, t1c)
-        g = nx.Graph()
-        #           x
-        #       +       +
-        #     1...6   1...6
-        g.add_edges_from(
-            (
-                (r"\times", r"+'"),
-                (r"\times", r"+"),
-                *((r"+'", r"a_" + str(i)) for i in range(1, 7)),
-                *((r"+", r"b_" + str(i)) for i in range(1, 7)),
-            )
-        )
-        graph = Graph(
-            vertices=list(g.nodes),
-            edges=list(g.edges),
-            layout="tree",
-            layout_scale=5,
-            root_vertex=r"\times",
-            labels=True,
-            layout_config=dict(
-                vertex_spacing=(1, 1.5),
-            ),
-        )
+        graph = self.computational_graph()
         t2a = MarkupText(
             f"A probability distribution is the "
             f"<span fgcolor='{BLUE_B}'>sum</span>-<span fgcolor='{RED_B}'>product</span> "
@@ -785,6 +763,32 @@ class Main(Scene):
         self.wait(3)
         self.play(FadeOut(t3a), FadeOut(t3b))
 
+    def computational_graph(self, vertex_spacing=(1, 1.5)):
+        g = nx.Graph()
+        #           x
+        #       +       +
+        #     1...6   1...6
+        g.add_edges_from(
+            (
+                (r"\times", r"+'"),
+                (r"\times", r"+"),
+                *((r"+'", r"a_" + str(i)) for i in range(1, 7)),
+                *((r"+", r"b_" + str(i)) for i in range(1, 7)),
+            )
+        )
+        graph = Graph(
+            vertices=list(g.nodes),
+            edges=list(g.edges),
+            layout="tree",
+            layout_scale=5,
+            root_vertex=r"\times",
+            labels=True,
+            layout_config=dict(
+                vertex_spacing=vertex_spacing,
+            ),
+        )
+        return graph
+
     def uncertainty(self):
         """
         4. Robust sum-product networks
@@ -851,22 +855,17 @@ class Main(Scene):
         set_probabilities = VGroup(
             *[MathTex(r"p_" + str(i), color=RED_B) for i in range(6)]
         )
-        _set_probabilities = MathTex(
-            r"&L_1 \leq p_1 \leq U_1\\",
-            r"&L_2 \leq p_2 \leq U_2\\",
-            r"&L_3 \leq p_3 \leq U_3\\",
-            r"&L_4 \leq p_4 \leq U_4\\",
-            r"&L_5 \leq p_5 \leq U_5\\",
-            r"&L_6 \leq p_6 \leq U_6\\",
-            font_size=DEFAULT_FONT_SIZE * 0.7,
-        )
+        _set_probabilities = self.imprecise_probabilities_dice_constraints()
         real_prob_table = self.get_probabilities_table(real_probabilities)
         set_prob_table = self.get_probabilities_table(
             set_probabilities, dot_color=RED_B
         )
+        graph = self.computational_graph(vertex_spacing=(1, 1.4))
+        set_probabilities_a = self.imprecise_probabilities_dice_constraints(r"a")
+        set_probabilities_b = self.imprecise_probabilities_dice_constraints(r"b")
 
         t3a = MarkupText(
-            f"What robustness you gain from using <span fgcolor='{RED_B}'>imprecise</span>, "
+            f"What robustness you gain from being <span fgcolor='{RED_B}'>imprecise</span>, "
             f"you lose in computational complexity",
             font_size=DEFAULT_FONT_SIZE * 0.5,
         )
@@ -936,8 +935,27 @@ class Main(Scene):
             ReplacementTransform(real_prob_table, set_prob_table),
             ReplacementTransform(_real_probabilities, _set_probabilities),
         )
+        self.wait(1)
+
+        graph.next_to(t2c, DOWN).shift(LEFT * 1)
+        graph.scale(scale_factor=0.7)
+        set_probabilities_a.to_edge(RIGHT)
+        set_probabilities_b.to_edge(LEFT)
+        self.play(FadeOut(set_prob_table))
+        self.play(Create(graph))
+        self.play(
+            graph.animate.scale_to_fit_width(8),
+            graph.animate.move_to(ORIGIN),
+        )
+        self.play(
+            set_probabilities_b.animate.next_to(graph, LEFT * 2),
+            _set_probabilities.animate.next_to(graph, RIGHT * 2),
+        )
+        self.play(
+            ReplacementTransform(_set_probabilities, set_probabilities_a),
+        )
         self.wait(3)
-        self.play(FadeOut(set_prob_table, _set_probabilities))
+        self.play(FadeOut(set_probabilities_a, set_probabilities_b), Uncreate(graph))
 
         t3.arrange(DOWN)
         t3.to_edge(UP)
@@ -968,6 +986,18 @@ class Main(Scene):
             FadeOut(min_prob_1),
             FadeOut(max_prob_1),
         )
+
+    def imprecise_probabilities_dice_constraints(self, var: str = "p"):
+        _set_probabilities = MathTex(
+            r"&L_1 \leq " + var + r"_1 \leq U_1\\",
+            r"&L_2 \leq " + var + r"_2 \leq U_2\\",
+            r"&L_3 \leq " + var + r"_3 \leq U_3\\",
+            r"&L_4 \leq " + var + r"_4 \leq U_4\\",
+            r"&L_5 \leq " + var + r"_5 \leq U_5\\",
+            r"&L_6 \leq " + var + r"_6 \leq U_6\\",
+            font_size=DEFAULT_FONT_SIZE * 0.7,
+        )
+        return _set_probabilities
 
     def further(self):
         """
