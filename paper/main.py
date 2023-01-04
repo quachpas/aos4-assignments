@@ -88,6 +88,14 @@ class Main(Scene):
         self.next_section()
         self.uncertainty()
         self.next_section()
+        par = Paragraph(
+            "For the next section, pause the video "
+            "if you wish to think about the answer first",
+            font_size=DEFAULT_FONT_SIZE * 0.5,
+        )
+        self.play(FadeIn(par))
+        self.wait(2)
+        self.play(FadeOut(par))
         self.further()
         self.wait(2)
 
@@ -585,7 +593,7 @@ class Main(Scene):
             ),
         )
         t1 = VGroup(t1a, t1b, t1c)
-        graph = self.computational_graph()
+        graph = self.computational_graph_independent()
         t2a = MarkupText(
             f"A probability distribution is the "
             f"<span fgcolor='{BLUE_B}'>sum</span>-<span fgcolor='{RED_B}'>product</span> "
@@ -763,32 +771,6 @@ class Main(Scene):
         self.wait(3)
         self.play(FadeOut(t3a), FadeOut(t3b))
 
-    def computational_graph(self, vertex_spacing=(1, 1.5)):
-        g = nx.Graph()
-        #           x
-        #       +       +
-        #     1...6   1...6
-        g.add_edges_from(
-            (
-                (r"\times", r"+'"),
-                (r"\times", r"+"),
-                *((r"+'", r"a_" + str(i)) for i in range(1, 7)),
-                *((r"+", r"b_" + str(i)) for i in range(1, 7)),
-            )
-        )
-        graph = Graph(
-            vertices=list(g.nodes),
-            edges=list(g.edges),
-            layout="tree",
-            layout_scale=5,
-            root_vertex=r"\times",
-            labels=True,
-            layout_config=dict(
-                vertex_spacing=vertex_spacing,
-            ),
-        )
-        return graph
-
     def uncertainty(self):
         """
         4. Robust sum-product networks
@@ -860,9 +842,15 @@ class Main(Scene):
         set_prob_table = self.get_probabilities_table(
             set_probabilities, dot_color=RED_B
         )
-        graph = self.computational_graph(vertex_spacing=(1, 1.4))
+        graph = self.computational_graph_independent(vertex_spacing=(1, 1.4))
         set_probabilities_a = self.imprecise_probabilities_dice_constraints(r"a")
         set_probabilities_b = self.imprecise_probabilities_dice_constraints(r"b")
+        a_constraint = MathTex(
+            r"a_1 + a_2 + a_3 + a_4 + a_5 + a_6 = 1", font_size=DEFAULT_FONT_SIZE * 0.7
+        )
+        b_constraint = MathTex(
+            r"b_1 + b_2 + b_3 + b_4 + b_5 + b_6 = 1", font_size=DEFAULT_FONT_SIZE * 0.7
+        )
 
         t3a = MarkupText(
             f"What robustness you gain from being <span fgcolor='{RED_B}'>imprecise</span>, "
@@ -890,7 +878,10 @@ class Main(Scene):
             *get_die_faces([1], side_length=0.5, dot_radius=0.04),
             MathTex(r")"),
             MathTex(r"="),
-            MathTex(r"p_1"),
+            MathTex(r"..."),
+            Text(
+                "(infinitely) many possible values!", font_size=DEFAULT_FONT_SIZE * 0.4
+            ),
         )
         min_prob_1 = VGroup(
             MathTex(r"\min"),
@@ -954,8 +945,19 @@ class Main(Scene):
         self.play(
             ReplacementTransform(_set_probabilities, set_probabilities_a),
         )
+        a_constraint.next_to(graph, DOWN * 2)
+        b_constraint.next_to(graph, DOWN * 2)
+        self.play(
+            a_constraint.animate.shift(LEFT * 4),
+            b_constraint.animate.shift(RIGHT * 4),
+        )
         self.wait(3)
-        self.play(FadeOut(set_probabilities_a, set_probabilities_b), Uncreate(graph))
+        self.play(
+            FadeOut(set_probabilities_a, set_probabilities_b),
+            Uncreate(graph),
+            FadeOut(a_constraint),
+            FadeOut(b_constraint),
+        )
 
         t3.arrange(DOWN)
         t3.to_edge(UP)
@@ -987,18 +989,6 @@ class Main(Scene):
             FadeOut(max_prob_1),
         )
 
-    def imprecise_probabilities_dice_constraints(self, var: str = "p"):
-        _set_probabilities = MathTex(
-            r"&L_1 \leq " + var + r"_1 \leq U_1\\",
-            r"&L_2 \leq " + var + r"_2 \leq U_2\\",
-            r"&L_3 \leq " + var + r"_3 \leq U_3\\",
-            r"&L_4 \leq " + var + r"_4 \leq U_4\\",
-            r"&L_5 \leq " + var + r"_5 \leq U_5\\",
-            r"&L_6 \leq " + var + r"_6 \leq U_6\\",
-            font_size=DEFAULT_FONT_SIZE * 0.7,
-        )
-        return _set_probabilities
-
     def further(self):
         """
         5. Further concepts:
@@ -1015,7 +1005,7 @@ class Main(Scene):
         )
         t1b = MarkupText(
             f"For example, how do you represent "
-            f"<span fgcolor='{BLUE_B}'>non-independence</span> "
+            f"<span fgcolor='{BLUE_B}'>dependence</span> "
             f"in SPNs?",
             font_size=DEFAULT_FONT_SIZE * 0.5,
         )
@@ -1023,7 +1013,12 @@ class Main(Scene):
             f"What would the graphs look like?",
             font_size=DEFAULT_FONT_SIZE * 0.5,
         )
-        t1 = VGroup(t1a, t1b, t1c)
+        t1d = MarkupText(
+            f"Maybe something like this...",
+            font_size=DEFAULT_FONT_SIZE * 0.5,
+        )
+        graph_dependent = self.computational_graph_dependent()
+        t1 = VGroup(t1a, t1b, t1c, t1d)
 
         t2a = MarkupText(
             f"SPNs have to satisfy a number of "
@@ -1038,7 +1033,13 @@ class Main(Scene):
             f"What would they be?",
             font_size=DEFAULT_FONT_SIZE * 0.5,
         )
-        t2 = VGroup(t2a, t2b, t2c)
+        t2d = MarkupText(
+            f"Is this correct?",
+            font_size=DEFAULT_FONT_SIZE * 0.5,
+        )
+        t2 = VGroup(t2a, t2b, t2c, t2d)
+        incomplete_sum = self.incomplete_sum_graph()
+        inconsistent_product = self.inconsistent_product_graph()
 
         t3a = MarkupText(
             f"In addition, using "
@@ -1055,10 +1056,15 @@ class Main(Scene):
         ## --- Animation ---- ##
         t1.arrange(DOWN)
         t1.to_edge(UP)
+        graph_dependent.scale_to_fit_width(8)
+        graph_dependent.move_to(ORIGIN).shift(DOWN)
         for t in t1:
             self.play(FadeIn(t))
             self.wait(1)
-        self.wait(2)
+        self.play(Create(graph_dependent))
+        self.wait(5)
+        self.play(Uncreate(graph_dependent))
+        self.wait(1)
 
         t2.arrange(DOWN)
         t2.to_edge(UP)
@@ -1067,7 +1073,17 @@ class Main(Scene):
         for t in t2[1:]:
             self.play(FadeIn(t))
             self.wait(1)
-        self.wait(2)
+        incomplete_sum.move_to(ORIGIN).shift(LEFT * 3)
+        inconsistent_product.move_to(ORIGIN).shift(RIGHT * 3)
+        self.play(
+            Create(incomplete_sum),
+        )
+        self.play(
+            Create(inconsistent_product),
+        )
+        self.wait(5)
+        self.play(Uncreate(incomplete_sum), Uncreate(inconsistent_product))
+        self.wait(1)
 
         t3.arrange(DOWN)
         t3.to_edge(UP)
@@ -1077,6 +1093,158 @@ class Main(Scene):
             self.play(FadeIn(t))
             self.wait(1)
         self.wait(3)
+
+    def incomplete_sum_graph(self, vertex_spacing=(1, 1.5)):
+        g = nx.Graph()
+        #       +
+        #   x1     x2
+        g.add_edges_from(
+            (
+                (r"+", r"x_1"),
+                (r"+", r"x_2"),
+            )
+        )
+        graph = Graph(
+            vertices=list(g.nodes),
+            edges=list(g.edges),
+            layout="tree",
+            root_vertex=r"+",
+            labels=True,
+            layout_config=dict(
+                vertex_spacing=vertex_spacing,
+            ),
+        )
+        return graph
+
+    def inconsistent_product_graph(self, vertex_spacing=(1, 1.5)):
+        g = nx.Graph()
+        #       x
+        #   x1     ~x1
+        g.add_edges_from(
+            (
+                (r"x", r"x1"),
+                (r"x", r"nx1"),
+            )
+        )
+        graph = Graph(
+            vertices=list(g.nodes),
+            edges=list(g.edges),
+            layout="tree",
+            labels={
+                "x": MathTex(r"\times").set_color(BLACK),
+                "x1": MathTex(r"x_1").set_color(BLACK),
+                "nx1": MathTex(
+                    r"\text{not}(x_1)", font_size=DEFAULT_FONT_SIZE * 0.4
+                ).set_color(BLACK),
+            },
+            root_vertex="x",
+            layout_config=dict(
+                vertex_spacing=vertex_spacing,
+            ),
+        )
+        return graph
+
+    def computational_graph_independent(self, vertex_spacing=(1, 1.5)):
+        g = nx.Graph()
+        #           x
+        #       +       +
+        #     1...6   1...6
+        g.add_edges_from(
+            (
+                (r"\times", r"+'"),
+                (r"\times", r"+"),
+                *((r"+'", r"a_" + str(i)) for i in range(1, 7)),
+                *((r"+", r"b_" + str(i)) for i in range(1, 7)),
+            )
+        )
+        graph = Graph(
+            vertices=list(g.nodes),
+            edges=list(g.edges),
+            layout="tree",
+            layout_scale=5,
+            root_vertex=r"\times",
+            labels=True,
+            layout_config=dict(
+                vertex_spacing=vertex_spacing,
+            ),
+        )
+        return graph
+
+    def computational_graph_dependent(self):
+        g = nx.Graph()
+        #                           +(s1)
+        #                       x(p1)   x(p2)
+        #       +(s2)   +(s3)   +(s4)   +(s5)
+        #         x1     ~x1     x2      ~x2      x3  ~x3
+        g.add_edges_from(
+            (
+                ("s1", "p1"),
+                ("s1", "p2"),
+                ("p1", "s2"),
+                ("p1", "s4"),
+                ("p1", "x3"),
+                ("p2", "s3"),
+                ("p2", "s5"),
+                ("p2", "nx3"),
+                ("s2", "x1"),
+                ("s2", "nx1"),
+                ("s3", "x1"),
+                ("s3", "nx1"),
+                ("s4", "x2"),
+                ("s4", "nx2"),
+                ("s5", "x2"),
+                ("s5", "nx2"),
+            )
+        )
+        pos = {
+            "s1": (3, 3, 0),
+            "p1": (2, 2, 0),
+            "p2": (4, 2, 0),
+            "s2": (-1, 1, 0),
+            "s3": (1, 1, 0),
+            "s4": (2, 1, 0),
+            "s5": (4, 1, 0),
+            "x1": (-1, 0, 0),
+            "nx1": (1, 0, 0),
+            "x2": (2, 0, 0),
+            "nx2": (4, 0, 0),
+            "x3": (6, 0, 0),
+            "nx3": (8, 0, 0),
+        }
+        graph = Graph(
+            vertices=list(g.nodes),
+            edges=list(g.edges),
+            layout=pos,
+            root_vertex="s1",
+            labels={
+                **{f"s{i}": MathTex(r"+").set_color(BLACK) for i in range(1, 6)},
+                **{f"p{i}": MathTex(r"\times").set_color(BLACK) for i in range(1, 3)},
+                **{
+                    f"x{i}": MathTex(r"x_" + str(i)).set_color(BLACK)
+                    for i in range(1, 4)
+                },
+                **{
+                    f"nx{i}": MathTex(
+                        r"\text{not}(x_" + str(i) + r")",
+                        font_size=DEFAULT_FONT_SIZE * 0.4,
+                    ).set_color(BLACK)
+                    for i in range(1, 4)
+                },
+            },
+        )
+        return graph
+
+    def imprecise_probabilities_dice_constraints(self, var: str = "p"):
+        _set_probabilities = MathTex(
+            r"&L_1 \leq " + var + r"_1 \leq U_1\\",
+            r"&L_2 \leq " + var + r"_2 \leq U_2\\",
+            r"&L_3 \leq " + var + r"_3 \leq U_3\\",
+            r"&L_4 \leq " + var + r"_4 \leq U_4\\",
+            r"&L_5 \leq " + var + r"_5 \leq U_5\\",
+            r"&L_6 \leq " + var + r"_6 \leq U_6\\",
+            font_size=DEFAULT_FONT_SIZE * 0.7,
+        )
+        return _set_probabilities
 
     def get_probabilities_table(
         self,
