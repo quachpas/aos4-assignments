@@ -3,6 +3,7 @@
 \usepackage[]{fontspec} 
 \usepackage[]{amsmath,amssymb}
 \usepackage[]{cleveref} 
+\usepackage[]{greekctr} 
 \usepackage[]{cancel} 
 \usepackage[]{lipsum} 
 \usepackage[]{csquotes} 
@@ -12,12 +13,32 @@
 \usepackage[]{tabularx} 
 \usepackage[]{pdflscape} 
 \usepackage[]{xcolor} 
+\usepackage[]{enumitem} 
+\usepackage[]{calc} 
+\usepackage[normalem]{ulem} 
+\usepackage[]{arydshln} 
+
+% siunitx - numeric formatting
 \DeclareSIUnit[]{\SIeuro}{\texteuro}
 \newcommand{\price}[1]{\SI[round-precision=2,round-mode=places,round-integer-to-decimal]{#1}[]{\SIeuro}}
 \newcommand{\weight}[1]{\qty{#1}{\gram}}
 \newcommand{\dimensions}[1]{\qtyproduct{#1}{\milli\metre}}
 \newcommand{\displaysize}[1]{\qty{#1}{"}}
 \newcommand{\capacity}[1]{\qty{#1}{\milli\ampere\hour}}
+
+% cleverref - exam cls
+\renewcommand\partlabel{(\alph{partno})}
+\renewcommand\subpartlabel{(\roman{subpart})}
+\renewcommand\subsubpartlabel{(\greek{subsubpart})}
+
+\crefname{question}{question}{questions}
+\crefname{subpart}{part}{parts}
+\crefname{subsubpart}{part}{parts}
+\crefname{partno}{part}{part}
+\creflabelformat{question}{(#2#1#3)}
+\creflabelformat{subpart}{(#2#1#3)}
+\creflabelformat{subsubpart}{(#2#1#3)}
+\creflabelformat{partno}{(#2#1#3)}
 
 \begin{document}
 
@@ -45,8 +66,10 @@ After consulting with your parents, they give you the following guidelines:
 
 \begin{enumerate}
 	\item \textquote{The price cannot exceed \price{1000}}
-	\item \textquote{The camera should not influence your decision}
-	\item \textquote{It is preferable if you give a ranking, rather than a choice}
+	\item \textquote{The camera or chipset should not influence your
+		decision}
+	\item \textquote{It is preferable if you give a ranking, rather than a
+		choice}
 \end{enumerate}
 
 After searching for the products' details online, you compile the information into~\cref{tab:em-1}
@@ -66,6 +89,9 @@ After searching for the products' details online, you compile the information in
 		(order/type),
 		apply Pareto Dominance, lexicographic/WS criteria, and further
 		identify the different elicitation scenarios. 
+
+		The evaluation matrix does not include technical details to reduce
+		the amount of assumed technical knowledge.
 	}
 \end{solutionorbox}
 
@@ -78,22 +104,25 @@ After searching for the products' details online, you compile the information in
 	% (Clarify objectives with preference information)
 	
 	\begin{parts}
-		\part \label{q:1a} According to your preferences, and only using the data
+		\part \label{q:1a}%
+		According to your preferences, and only using the criteria 
 		contained in~\cref{tab:em-1}, make a decision and list your top
 		3 choices.
-
-		\part \label{q:1b} For each criteria, answer the following questions, and compare your
+		\part \label{q:1b}% 
+		For each criterion, answer the following questions, and compare your
 		answers in group:
 		
 		\begin{subparts}
-			\subpart \label{q:1bi} What objective have you chosen,
-			\textit{e}.\textit{g}.\ $\max$, $\min$?
+			\subpart \label{q:1bi}%
+			What objective have you chosen, \textit{e}.\textit{g}.\
+			$\max$, $\min$?
+
+			\subpart \label{q:1bii}%
+			If you cannot choose an objective, how did you order
+			the values?
 			
-			\subpart \label{q:1bii} If you cannot choose an
-			objective, how did you order the values?
-			
-			\subpart \label{q:1biii} Are there criteria that are
-			\textquote{not important}?
+			\subpart \label{q:1biii}%
+			Are there criteria that are \textquote{not important}?
 		\end{subparts}
 	\end{parts}
 	
@@ -103,20 +132,88 @@ After searching for the products' details online, you compile the information in
 		and the data. Identify subjective aspects of the criteria, types 
 		of criteria, etc.
 
-		For question~\cref{q:1a}, the idea is to introduce the data to the 
+		For~\cref{q:1a}, the idea is to introduce the data to the 
 		student, and make sure he has gone through the table. Any preferences
-		the student has can serve for further reasoning. Why did he prefer
-		certain criteria over others? Which objectives did he choose for each
-		criteria?
+		the student has can serve for further reasoning. Why did they prefer
+		certain criteria to others? Which objectives did they choose for each
+		criterion?
 
-		In~\cref{q:1b}, we 
+		In~\cref{q:1b}, criteria are studied more in depth and is directly
+		following the previous line of thought, but explicitly.
+
+		A suggested solution is the following:
+
+		\begin{enumerate}
+			\item[(a)] Google Pixel 7 Pro, Samsung Galaxy A52s 5G, Nothing Phone (1)
+			\item [(b)] \begin{enumerate}
+				\item (Brand) Google, Samsung, OnePlus, Nothing, \sout{Apple/Xiaomi/Asus/Huawei/Motorola}
+				\item (Release Date) No preference
+				\item (Dimensions) No preference
+				\item (5G) No preference
+				\item (Display Type) All the values indicated are identical
+				\item (Display Size) Maximum
+				\item (Operating System) Android, \sout{iOS/EMUI}
+				\item (Jack) No preference
+				\item (Battery capacity) Maximize
+				\item (Price) Minimize
+			\end{enumerate}
+		\end{enumerate}
 	}
 	\end{solutionorbox}
 	
 	\question
 	% 1. Pareto Dominance
 	%	(Apply Pareto Dominance)
+	Using the criteria that you identified as relevant, try and apply
+	Pareto Dominance to make a decision.
+	
 	\begin{solutionorbox}
+	{
+		\color{red}
+		Practice question for Pareto Dominance. Results might vary from
+		individual to individual. The TA may instead choose a fixed
+		list of  interesting criteria, e.g. 5G, jack, display size,
+		operating system, battery capacity, and price.
+
+		Using brand, display size, operating system, battery capacity and price:
+
+		{
+			\footnotesize
+			\begin{tabular}{|c|c|c|c|c|c|}
+							\hline
+				Name & Brand & Display Size & Operating System & Battery capacity & Price \\%&
+				\hdashline
+				Objective & Ordered & Maximize & Ordered & Maximize & Minimize \\
+				\hline\hline
+				Google Pixel 7 Pro & Google & \displaysize{6.7} & Android & \capacity{5000} & \price{812.00}\\%&
+				\hline
+				Samsung Galaxy A52s 5G & Samsung & \displaysize{6.5} & Android & \capacity{4500} & \price{349.99}\\%&
+				\hline
+				Samsung Galaxy S22 Ultra 5G & Samsung & \displaysize{6.8} & Android & \capacity{5000} & \price{928.00}\\%&
+				\hline
+				OnePlus 10 Pro & OnePlus & \displaysize{6.7} & Android & \capacity{5000} & \price{724.99}\\%&
+				\hline
+				Nothing Phone (1) & Nothing & \displaysize{6.55} & Android & \capacity{4500} & \price{399.00}\\%&
+				\hline
+				Asus Zenfone 9 & \sout{Asus} & \displaysize{5.9} & Android & \capacity{4300} & \price{743.89}\\%&
+				\hline
+				Asus ROG Phone 6D Ultimate & \sout{Asus} & \displaysize{6.78} & Android & \capacity{6000} & \price{1399.00}\\%&
+				\hline
+				Huawei Mate 50 Pro & \sout{Huawei} & \displaysize{6.74} & \sout{EMUI} & \capacity{4700} & \price{1154.99}\\%&
+				\hline
+				Xiaomi 11T Pro & \sout{Xiaomi} & \displaysize{6.67} & Android & \capacity{5000} & \price{412.99}\\%&
+				\hline
+				Xiaomi 12 Pro & \sout{Xiaomi} & \displaysize{6.73} & Android & \capacity{4600} & \price{758.00}\\%&
+				\hline
+				Motorola Moto X40 & \sout{Motorola} & \displaysize{6.7} & Android & \capacity{4600} & \price{465.79}\\%&
+				\hline
+				Apple iPhone 13 Pro Max & \sout{Apple} & \displaysize{6.7} & \sout{iOS} & \capacity{4352} & \price{1379}\\%&
+				\hline
+			\end{tabular}
+		}
+
+
+	}
 	\end{solutionorbox}
 
 	\question
