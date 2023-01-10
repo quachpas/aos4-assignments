@@ -1,0 +1,9 @@
+\RequirePackage{tagging}
+\usetag{comments}
+
+\newenvironment{comments}{%
+	\taggedblock{comments}
+	\color{cyan}
+}{%
+	\endtaggedblock
+}

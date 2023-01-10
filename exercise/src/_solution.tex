@@ -1,0 +1,9 @@
+\RequirePackage{tagging}
+\PassOptionsToClass{answers}{exam}
+
+\newenvironment{comments}{%
+	\taggedblock{comments}
+	\color{cyan}
+}{%
+	\endtaggedblock
+}

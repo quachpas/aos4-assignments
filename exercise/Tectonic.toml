@@ -1,0 +1,24 @@
+[doc]
+name = 'exercise'
+bundle = 'https://data1.fullyjustified.net/tlextras-2022.0r0.tar'
+
+[[output]]
+name = 'statement'
+preamble = '_statement.tex'
+index = 'exercise.tex'
+postamble = ''
+type = 'pdf'
+
+[[output]]
+name = 'solution'
+preamble = '_solution.tex'
+index = 'exercise.tex'
+postamble = ''
+type = 'pdf'
+
+[[output]]
+name = 'comments'
+preamble = '_comments.tex'
+index = 'exercise.tex'
+postamble = ''
+type = 'pdf'

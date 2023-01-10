@@ -1,4 +1,4 @@
-\documentclass[answers, 10pt, UKenglish]{exam}
+\documentclass[10pt, UKenglish]{exam}
 \usepackage[UKenglish]{babel} 
 \usepackage[]{fontspec} 
 \usepackage[]{amsmath,amssymb}
@@ -22,8 +22,8 @@
 \graphicspath{{figures}}
 
 % siunitx - numeric formatting
-\DeclareSIUnit[]{\SIeuro}{\texteuro}
-\newcommand{\price}[1]{\SI[round-precision=2,round-mode=places,round-integer-to-decimal]{#1}[]{\SIeuro}}
+\DeclareSIUnit[]{\SIeuro}{€}
+\newcommand{\price}[1]{\SI[round-precision=2,round-mode=places]{#1}[]{\SIeuro}}
 \newcommand{\weight}[1]{\qty{#1}{\gram}}
 \newcommand{\dimensions}[1]{\qtyproduct{#1}{\milli\metre}}
 \newcommand{\displaysize}[1]{\qty{#1}{"}}
@@ -70,26 +70,20 @@ After consulting with your parents, they give you the following guidelines:
 
 After searching for the products' details online, you compile the information into~\cref{tab:em-1}
 
+\begin{comments}
+	This exercise should be solved in class, as practice for MCDM.
+	The familiar context enables students to confront their own
+	reasoning to the studied decision theory, and facilitates
+	reviewing taken decisions.
+	The questions let students identify the types of criteria
+	(order/type), apply Pareto Dominance, lexicographic/WS
+	aggregation, normalization for aggregation, and further
+	identify the different elicitation scenarios.
+	The evaluation matrix does not include technical details to
+	reduce the amount of assumed technical knowledge.
+\end{comments}
 
 \begin{questions}
-\begin{solutionorbox}
-	{
-		\color{red}
-		
-		This exercise should be solved in class, as practice for MCDM.
-		The familiar context enables students to confront their own
-		reasoning to the studied decision theory, and facilitates
-		reviewing taken decisions.\\
-
-		The questions let students identify the types of criteria
-		(order/type), apply Pareto Dominance, lexicographic/WS
-		aggregation, normalization for aggregation, and further
-		identify the different elicitation scenarios.\\
-
-		The evaluation matrix does not include technical details to
-		reduce the amount of assumed technical knowledge.
-	}
-\end{solutionorbox}
 	\question
 	
 	\begin{parts}
@@ -116,12 +110,11 @@ After searching for the products' details online, you compile the information in
 			preference?
 		\end{subparts}
 	\end{parts}
-	
-	\begin{solutionorbox}
-	{ 
-		\color{red} Introductory question, familiarize with the context
-		and the data. Identify subjective aspects of the criteria, types 
-		of criteria, etc.
+
+	\begin{comments}
+		Introductory question, familiarize with the context
+		and the data. Identify subjective aspects of the criteria,
+		types of criteria, etc.
 
 		For~\cref{q:1a}, the idea is to introduce the data to the 
 		student, and make sure he has gone through the table. Any preferences
@@ -131,6 +124,9 @@ After searching for the products' details online, you compile the information in
 
 		In~\cref{q:1b}, criteria are studied more in depth and is directly
 		following the previous line of thought, but explicitly.
+	\end{comments}
+	
+	\begin{solutionorbox}
 
 		A suggested solution is the following:
 
@@ -149,16 +145,14 @@ After searching for the products' details online, you compile the information in
 				\item (Price) Minimize
 			\end{enumerate}
 		\end{enumerate}
-	}
+		
 	\end{solutionorbox}
 	
 	\question\label{q:2}%
 	Using the criteria that you identified as relevant, try to apply Pareto
 	Dominance to make a decision.
-	
-	\begin{solutionorbox}
-	{
-		\color{red}
+
+	\begin{comments}
 		Practice question for Pareto Dominance. Results might vary from
 		individual to individual. The TA may instead choose a fixed
 		list of  interesting criteria, e.g. 5G, jack, display size,
@@ -167,7 +161,9 @@ After searching for the products' details online, you compile the information in
 		Almost certainly, students will showcase conflicting
 		objectives, \textit{e}.\textit{g}.\ minimize price and maximize
 		battery capacity.
-
+	\end{comments}
+	
+	\begin{solutionorbox}
 		Using brand, display size, operating system, battery capacity and price:
 
 		{
@@ -222,7 +218,6 @@ After searching for the products' details online, you compile the information in
 		\end{itemize}
 
 		There are no Pareto dominance relationships.
-	}
 	\end{solutionorbox}
 
 	\question\label{q:3}%
@@ -240,9 +235,6 @@ After searching for the products' details online, you compile the information in
 	\end{parts}
 
 	\begin{solutionorbox}
-	{
-		\color{red}
-
 		Some objectives might be conflicting, meaning that you cannot
 		at the same time maximize display size, battery capacity and
 		minimize the price.
@@ -251,7 +243,6 @@ After searching for the products' details online, you compile the information in
 		swaps, as you resolve the trade-offs by trading criteria for
 		others, \textit{e}.\textit{g}.\ \qty{500}{\milli\ampere\hour}
 		might be traded for \price{100}.
-	}
 	\end{solutionorbox}
 
 	\question\label{q:4}%
@@ -267,10 +258,8 @@ After searching for the products' details online, you compile the information in
 		\part\label{q:4b}%
 		Use weighted sum aggregation. What issues does this method have?
 	\end{parts}
-	\begin{solutionorbox}
-	{
-		\color{red}
-
+	
+	\begin{comments}
 		The question introduces aggregation techniques for practice
 		purposes. Optionally, the Choquet Integral can be introduced. 
 
@@ -290,7 +279,9 @@ After searching for the products' details online, you compile the information in
 		maximize). A further issue is the difference in numeric range
 		for different criteria. Preferably, the student should
 		\textbf{normalize} values first.
-
+	\end{comments}
+	
+	\begin{solutionorbox}
 		An example would be the following:
 
 		For~\cref{q:4a}, brand is prioritized first, thus the only choice is the Google Pixel 7 Pro.
@@ -331,15 +322,9 @@ After searching for the products' details online, you compile the information in
 		The results are remarkably different between unnormalized and
 		normalized data. Although, the Google Pixel 7 Pro is still
 		chosen by both lexicographic and weighted sum models. 
-
-	}
 	\end{solutionorbox}
 	
 	\question\label{q:5}%
-	% 4. Do you think the decision makes sense? Explain wrt to the aggregation procedures, and the criteria.
-	%	(Introduce common sense, and examine the aggregation/criteria)
-	%	(Does the ranking make sense? How do you obtain weights?)
-	%	(What "real" consequences does the decision have?)
 	Do you agree with the decision made using aggregation? Why? 
 	
 	\begin{parts}
@@ -354,35 +339,26 @@ After searching for the products' details online, you compile the information in
 		Suggest a better aggregation procedure.
 
 	\end{parts}
-	\begin{solutionorbox}
-	{
-		\color{red}
-		
+	
+	\begin{comments}
 		The question aims at providing more insight into how exactly
 		the aggregation chose to rank the alternatives, and which
 		criteria took the most importance. The students must realize
 		that there exists a lot of subjectivity into how the criteria
 		are aggregated, and also difficulties in the aggregation
 		itself. 
-
+	\end{comments}
+	
+	\begin{solutionorbox}
 		The lexicographic is too drastic, the WS aggregation is linear,
 		the student must suggest a better aggregation method.
 
 		It is not asked that students define a fuzzy measure for this
 		problem, but they should mention the Choquet, or the Sugeno
 		integral.
-
-	}
 	\end{solutionorbox}
 	
 	\question\label{q:6}%
-	% fig. Product photos
-	% 5. Does the product design influence your choice? Would you change
-	% your decision? Why? Discuss the reasons in group
-	%	(Introduce missing criteria, product personality)
-	%	(Open discussion, introduce another subjective criteria,
-	%	and showcase the importance of product design
-	%	and how it fits "your personality")
 	After a very long and arduous decision process, you finally have a
 	ranking of potential smartphones, albeit with some faults! 
 
@@ -405,12 +381,12 @@ After searching for the products' details online, you compile the information in
 
 	\end{parts}
 
+	\begin{comments}
+		Introduce a very subjective visual criteria, which can be
+		thought as a MCDM problem in itself.
+	\end{comments}
+	
 	\begin{solutionorbox}
-	{
-		\color{red}
-
-		Introduce a very subjective visual criteria.
-
 		One example answer: 
 		\begin{itemize}
 			\item g, h, k, l, j, f, a, d, c, b, i, e
@@ -429,8 +405,6 @@ After searching for the products' details online, you compile the information in
 		criterion a MCDM problem in itself. 
 
 		Collecting users' preferences is a very difficult task.
-
-	}
 	\end{solutionorbox}
 \end{questions}
 
